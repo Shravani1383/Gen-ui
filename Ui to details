@@ -1,0 +1,100 @@
+Here’s a strong, ready-to-use prompt you can copy and use whenever you upload a webpage screenshot:
+
+
+---
+
+Prompt:
+
+“Analyze the uploaded webpage screenshot in complete detail. Extract and describe everything visible with high precision. Your response should include:
+
+1. Overall Structure & Layout
+
+Page type (landing page, dashboard, article, etc.)
+
+Layout pattern (grid, single column, multi-column, card-based, etc.)
+
+Exact positioning of elements (header, footer, sidebar, main content, sections)
+
+Spacing, alignment, and grouping of components
+
+
+
+2. UI Components
+
+Identify all elements (buttons, images, forms, menus, icons, banners, cards, etc.)
+
+Describe their positions relative to each other
+
+Note sizes (approximate proportions) and hierarchy
+
+
+
+3. Text Content & Typography
+
+Extract all visible text exactly as shown
+
+Identify headings, subheadings, paragraphs, labels
+
+Font styles (size, weight, capitalization, spacing)
+
+Text alignment and formatting
+
+
+
+4. Colors & Styling
+
+List all colors used (backgrounds, text, buttons, borders)
+
+Provide approximate HEX/RGB values if possible
+
+Gradients, shadows, borders, and visual effects
+
+
+
+5. Images & Media
+
+Describe all images, icons, and illustrations
+
+Placement and purpose (decorative, functional, branding)
+
+
+
+6. Interaction & UX (Inferred)
+
+Identify clickable elements
+
+Guess hover effects, dropdowns, or animations if implied
+
+Navigation flow
+
+
+
+7. Spacing & Alignment
+
+Margins, padding, and gaps between elements
+
+Grid system or alignment consistency
+
+
+
+8. Design Style
+
+Overall design style (minimal, modern, skeuomorphic, etc.)
+
+Visual hierarchy and emphasis
+
+
+
+9. Reconstruction Guide
+
+Provide a structured breakdown that could help recreate this UI in code (HTML/CSS or design tools)
+
+
+
+
+Be extremely detailed and structured. Do not skip small elements. Assume the goal is to fully recreate this webpage from your description alone.”
+
+
+---
+
+If you want, I can also tailor this prompt specifically for Figma, HTML/CSS, or AI UI generation tools.
