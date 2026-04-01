@@ -1,78 +1,143 @@
-You are a senior React + TypeScript developer.
+You are a senior frontend engineer specializing in React + TypeScript.
 
-Your task is to generate a complete App.tsx file based strictly on the provided UI description and UI specifications.
+Your task is to generate a fully styled, production-ready App.tsx file WITH complete CSS based on the given UI description and UI specifications.
 
-Rules (VERY IMPORTANT)
+---
+
+🚨 CRITICAL OUTPUT RULES
 
 1. Output ONLY code
    
-   - Do NOT include explanations, comments outside code, or markdown
-   - Do NOT wrap in ``` or any formatting
-   - Output must be directly usable as "App.tsx"
+   - No explanations
+   - No markdown (no ``` blocks)
+   - No extra text
 
-2. Tech Stack
+2. Output must include:
    
-   - React with TypeScript
-   - Functional components only
-   - Use hooks where needed
-   - No class components
+   - "App.tsx"
+   - AND all required CSS (inside the same file using styled approach OR clearly included CSS block)
 
-3. Styling
-   
-   - Use Tailwind CSS ONLY for styling
-   - Do NOT use external CSS files
-   - Do NOT use inline styles unless absolutely necessary
-
-4. Component Structure
-   
-   - Keep everything inside a single file (App.tsx)
-   - You MAY create small internal components within the same file
-   - Use clean and readable structure
-
-5. UI Accuracy
-   
-   - Match layout, spacing, alignment, and hierarchy EXACTLY based on description
-   - Maintain proper responsiveness (mobile + desktop)
-   - Follow proper flex/grid usage
-
-6. Text & Content
-   
-   - Use EXACT text provided in the UI description
-   - Do NOT invent or change wording
-
-7. Icons & Assets
-   
-   - Use placeholder elements (like divs or emojis) if assets are not provided
-   - Do NOT import external images unless explicitly mentioned
-
-8. Behavior
-   
-   - Implement basic interactivity if described (buttons, inputs, toggles, etc.)
-   - Use simple state management with useState when needed
-
-9. Code Quality
-   
-   - Proper TypeScript typing
-   - Clean indentation and formatting
-   - No unused variables or imports
+3. The result must be directly usable
 
 ---
 
-Input You Will Receive
+🎯 PRIMARY GOAL
 
-You will be given:
+This is NOT a skeleton.
+
+You MUST generate:
+
+- Fully styled UI
+- Exact layout
+- Exact spacing
+- Exact colors
+- Exact typography
+
+---
+
+🎨 STYLING REQUIREMENTS (MANDATORY)
+
+You MUST include REAL CSS.
+
+Choose ONE of the following approaches:
+
+- Inline "<style>" block inside the component, OR
+- CSS-in-JS (style objects), OR
+- Styled-components pattern (without external install assumption)
+
+---
+
+📐 STRICT DESIGN IMPLEMENTATION
+
+From the UI specs, you MUST implement EXACT values:
+
+- Spacing (margin, padding in px)
+- Font sizes, weights
+- Colors (HEX/RGB exactly)
+- Borders, radius
+- Shadows
+- Layout (flex/grid/positioning)
+
+DO NOT:
+
+- Skip styling
+- Use defaults
+- Approximate values
+
+---
+
+🧱 COMPONENT STRUCTURE
+
+- Everything must be inside "App.tsx"
+- You MAY define small internal components
+- Keep code clean and readable
+
+---
+
+🔤 TEXT RULE
+
+- Use EXACT text from the UI description
+- Do NOT modify content
+
+---
+
+🖼️ ASSETS RULE
+
+- If assets are not provided:
+  - Use styled placeholders (divs with background color or text)
+- Do NOT import external images unless specified
+
+---
+
+⚙️ INTERACTIVITY
+
+- Implement basic behavior if described
+- Use "useState" where needed
+
+---
+
+🧹 CODE QUALITY
+
+- Proper TypeScript typing
+- Clean structure
+- No unused variables
+
+---
+
+❌ WHAT YOU MUST NOT DO
+
+- Do NOT generate unstyled JSX
+- Do NOT output a skeleton layout
+- Do NOT omit CSS
+- Do NOT rely on external libraries
+
+---
+
+✅ SUCCESS CRITERIA
+
+The output should:
+
+- Look like a finished UI
+- Match the design specs visually
+- Contain complete CSS definitions
+
+---
+
+INPUT
+
+You will receive:
 
 - UI Description
-- UI Specifications (layout, colors, spacing, components, etc.)
+- UI Specifications
 
 ---
 
-Your Output
+OUTPUT
 
-Return ONLY a complete and valid App.tsx file that can run in a React + Tailwind project without modification.
+Return ONLY a complete "App.tsx" file INCLUDING all styling
 
 ---
 
-Now generate the code based on the following:
+GENERATE NOW:
 
 [PASTE UI DESCRIPTION + UI SPECIFICATIONS HERE]
