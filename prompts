@@ -1,0 +1,369 @@
+Then keep it to **3 prompts**, not 4.
+
+Since the **GitHub repo content is already inside the prompt**, you do not need a separate discovery call every time. The better flow is:
+
+1. **Understand the UI request**
+2. **Select only valid library components from the repo content**
+3. **Generate code using only those selected components**
+
+That keeps the model grounded in the repo while avoiding too much prompt chaining.
+
+---
+
+# Recommended flow
+
+## Step 1: UI intent extraction
+
+This converts the user request into a neutral UI plan.
+
+### System prompt
+
+```text
+You are a UI intent parser.
+
+Convert the user's request into a strict JSON UI description.
+
+Rules:
+- Do not generate code
+- Do not mention any library or framework
+- Break the UI into atomic parts
+- Preserve labels, actions, hierarchy, and layout hints if present
+- If something is unclear, make the most reasonable UI assumption
+- Output JSON only
+```
+
+### User prompt template
+
+```text
+User request:
+{{user_prompt}}
+
+Return a structured UI intent JSON.
+```
+
+### Example output
+
+```json
+{
+  "type": "form",
+  "title": "Login",
+  "components": [
+    {
+      "type": "input",
+      "subtype": "email",
+      "label": "Email"
+    },
+    {
+      "type": "input",
+      "subtype": "password",
+      "label": "Password"
+    },
+    {
+      "type": "checkbox",
+      "label": "Remember me"
+    },
+    {
+      "type": "button",
+      "label": "Login",
+      "action": "submit",
+      "variant": "primary"
+    }
+  ]
+}
+```
+
+---
+
+## Step 2: component selection from repo content
+
+This is the most important prompt. It reads the repo content you pass in, then maps the intent to only approved components.
+
+### System prompt
+
+```text
+You are a strict UI library mapper.
+
+You are given:
+1. A structured UI intent
+2. Raw GitHub repository content for a design-system library
+
+Your task is to identify which components from the repository should be used to implement the UI.
+
+Rules:
+- Use only components that are clearly present in the provided repository content
+- Do not invent component names
+- Do not assume props that are not supported unless usage examples or type definitions strongly imply them
+- Prefer the most specific approved component over plain HTML
+- If multiple library components could work, choose the one that best matches the intent
+- If a required component is not available in the repository content, return it in "missing_requirements"
+- Include the exact evidence from the repo that supports the chosen component when possible
+- Output JSON only
+
+Return JSON with this shape:
+{
+  "selected_components": [
+    {
+      "intent": "",
+      "component": "",
+      "props": {},
+      "children": null,
+      "evidence": ""
+    }
+  ],
+  "imports": [],
+  "missing_requirements": []
+}
+```
+
+### User prompt template
+
+```text
+UI intent:
+{{intent_json}}
+
+Repository content:
+{{github_repo_content}}
+
+Select the exact library components needed for this UI.
+```
+
+### Example output
+
+```json
+{
+  "selected_components": [
+    {
+      "intent": "email input",
+      "component": "Input",
+      "props": {
+        "type": "email",
+        "label": "Email"
+      },
+      "children": null,
+      "evidence": "Input component supports type and label props in the provided repo content"
+    },
+    {
+      "intent": "password input",
+      "component": "Input",
+      "props": {
+        "type": "password",
+        "label": "Password"
+      },
+      "children": null,
+      "evidence": "Input component supports type and label props in the provided repo content"
+    },
+    {
+      "intent": "remember me checkbox",
+      "component": "Checkbox",
+      "props": {
+        "label": "Remember me"
+      },
+      "children": null,
+      "evidence": "Checkbox component exists in the provided repo content"
+    },
+    {
+      "intent": "submit button",
+      "component": "Button",
+      "props": {
+        "variant": "primary"
+      },
+      "children": "Login",
+      "evidence": "Button component exists and supports variant in the provided repo content"
+    }
+  ],
+  "imports": ["Input", "Checkbox", "Button"],
+  "missing_requirements": []
+}
+```
+
+---
+
+## Step 3: strict code generation
+
+Now code is generated only from the approved mapping.
+
+### System prompt
+
+```text
+You are a strict React code generator.
+
+You are given a pre-approved component mapping from a company UI library.
+
+Generate React code using only:
+- components listed in the approved imports
+- import source: -lib-name
+- stylesheet import: css sheet
+
+Rules:
+- Always include: import 'css sheet';
+- Only use components from the approved mapping
+- Do not invent components
+- Do not add external libraries
+- Do not use unsupported props
+- Keep the code clean and production-ready
+- If a form is generated, use standard React JSX structure
+- Output code only
+```
+
+### User prompt template
+
+```text
+Approved component mapping:
+{{mapping_json}}
+
+Generate the React component code.
+```
+
+### Example output
+
+```jsx
+import React from 'react';
+import { Input, Checkbox, Button } from 'lin';
+import 'css sheet';
+
+const LoginForm = () => {
+  return (
+    <form>
+      <Input type="email" label="Email" />
+      <Input type="password" label="Password" />
+      <Checkbox label="Remember me" />
+      <Button variant="primary">Login</Button>
+    </form>
+  );
+};
+
+export default LoginForm;
+```
+
+---
+
+# Best combined prompt structure
+
+Since you said the **repo will be passed in the prompt itself**, you can also do this in **2 prompts** if you want to reduce latency:
+
+## Prompt 1
+
+User request → intent JSON
+
+## Prompt 2
+
+Intent JSON + repo content → selected components + final code
+
+But I would still recommend **3 prompts** because:
+
+* component selection becomes auditable
+* easier to debug wrong choices
+* easier to reject hallucinated components
+* later easier to replace repo text with indexed retrieval
+
+---
+
+# Stronger version of step 2
+
+To reduce hallucination, add this line:
+
+```text
+For every selected component, you must justify it using only the provided repository content. If there is insufficient evidence, do not select it.
+```
+
+And add this line too:
+
+```text
+If you are not certain a component exists, treat it as unavailable.
+```
+
+These two lines matter a lot.
+
+---
+
+# Suggested JSON contracts
+
+## Intent JSON
+
+```json
+{
+  "type": "page|form|section|dialog|table",
+  "title": "",
+  "layout": "",
+  "components": [
+    {
+      "type": "",
+      "subtype": "",
+      "label": "",
+      "placeholder": "",
+      "variant": "",
+      "children": "",
+      "action": "",
+      "required": false
+    }
+  ]
+}
+```
+
+## Mapping JSON
+
+```json
+{
+  "selected_components": [
+    {
+      "intent": "",
+      "component": "",
+      "props": {},
+      "children": null,
+      "evidence": ""
+    }
+  ],
+  "imports": [],
+  "missing_requirements": []
+}
+```
+
+---
+
+# One-shot alternative
+
+If you want a single prompt for early prototyping, use this:
+
+### System prompt
+
+```text
+You are a strict enterprise UI generator.
+
+You will be given:
+1. A user UI request
+2. Raw GitHub repository content for the approved component library
+
+Your job is to:
+- understand the UI requirement
+- identify only valid components from the repository
+- generate React code using only approved components from @hsbc/fxo-tlc-ui-lib
+- always import add-base-assets-library
+
+Rules:
+- Do not invent components
+- Do not use any component unless it is supported by the provided repository content
+- If something is missing, clearly state the missing requirement instead of guessing
+- Prefer library components over raw HTML where supported
+- Output JSON only in this format:
+{
+  "intent": {},
+  "mapping": {},
+  "code": ""
+}
+```
+
+This works for demos, but for real usage I would still split selection and generation.
+
+---
+
+# My recommendation for your current phase
+
+Use this exact sequence:
+
+**Prompt 1:** user request → intent JSON
+**Prompt 2:** intent JSON + raw repo content → component mapping
+**Prompt 3:** mapping → React code
+
+That gives you the cleanest control while still passing the repo directly in prompt.
+
+I can write these as **ready-to-paste production prompt templates with placeholders** like `{{user_prompt}}`, `{{repo_content}}`, `{{intent_json}}`, and `{{mapping_json}}`.
