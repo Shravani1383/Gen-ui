@@ -103,42 +103,8 @@ DO NOT stop after finding just one file.
 
 OUTPUT FORMAT (STRICT)
 
-1. Feature Understanding
 
-- What needs to be built (interpreted from Jira)
-
----
-
-2. Relevant Files Identified
-
-For EACH file:
-
-- File path
-- What it does
-- Why it is relevant
-
----
-
-3. Key Patterns Observed
-
-- Naming conventions
-- Component structure
-- State/data handling patterns
-- Styling or UI patterns
-
----
-
-4. Suggested Implementation Location
-
-- Where the feature should live
-- Which files are likely entry points
-
----
-
-5. Open Questions / Uncertainties
-
-- Anything unclear that may affect implementation
-
+{ "files": [ { "path": "string", "changes": [ { "type": "insert | update | delete", "target": "function | component | variable name", "position": "start | end | before | after | replace", "code": "exact code snippet to apply", "description": "what this change does" ,"change":"describe exact change"} ] } ] }
 ---
 
 HARD RULES
