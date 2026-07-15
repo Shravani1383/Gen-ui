@@ -1,0 +1,350 @@
+Actually, for an HTML/CSS/JavaScript repository, I would simplify the approach significantly. You don't need architecture documents about APIs or databases—the biggest challenge is helping the agent locate the correct files and understand the relationships between them.
+
+If I were building a coding agent that only has GitHub get_content, I'd organize .ai like this:
+
+.ai/
+├── index.md                ← Entry point
+├── project_map.md          ← Folder and feature map
+├── file_catalog.md         ← Important files and their purpose
+├── ui_components.md        ← Reusable UI patterns
+├── coding_rules.md         ← Project conventions
+├── workflows.md            ← Common implementation patterns
+├── dependencies.md         ← Which files depend on which
+├── common_tasks.md         ← How to perform frequent changes
+└── pitfalls.md             ← Known gotchas
+
+1. index.md
+
+This is the first file the agent always reads.
+
+Example:
+
+Project Overview
+
+Tech Stack
+- HTML
+- CSS
+- JavaScript
+
+Important Documents
+
+Project Structure -> project_map.md
+
+Important Files -> file_catalog.md
+
+Coding Rules -> coding_rules.md
+
+UI Components -> ui_components.md
+
+Task Routing
+
+UI change
+→ ui_components.md
+
+Styling
+→ coding_rules.md
+
+Feature addition
+→ common_tasks.md
+
+Bug fix
+→ dependencies.md
+
+
+---
+
+2. project_map.md
+
+Instead of listing every file, organize the repository by features.
+
+Example:
+
+Login
+
+Files
+login.html
+login.js
+login.css
+
+Dashboard
+
+Files
+dashboard.html
+dashboard.js
+dashboard.css
+
+Navigation
+
+Files
+navbar.js
+menu.js
+
+Shared
+
+Files
+utils.js
+config.js
+constants.js
+
+The LLM can immediately narrow its search.
+
+
+---
+
+3. file_catalog.md
+
+This is one of the most valuable files.
+
+For each important file:
+
+navbar.js
+
+Purpose
+Controls top navigation.
+
+Responsibilities
+
+Navigation menu
+
+User dropdown
+
+Theme switching
+
+Imports
+
+utils.js
+
+config.js
+
+Repeat for every significant file. The agent learns what a file does without opening it.
+
+
+---
+
+4. dependencies.md
+
+Since there's no backend, this becomes your "architecture."
+
+Example:
+
+dashboard.html
+
+↓
+
+dashboard.js
+
+↓
+
+chart.js
+
+↓
+
+utils.js
+
+↓
+
+config.js
+
+Or in text:
+
+dashboard.js
+
+Depends on
+
+chart.js
+
+utils.js
+
+constants.js
+
+Used by
+
+dashboard.html
+
+This helps the agent understand the impact of changes.
+
+
+---
+
+5. ui_components.md
+
+Describe reusable UI elements.
+
+Example:
+
+Modal
+
+Files
+
+modal.js
+
+modal.css
+
+Used by
+
+Login
+
+Settings
+
+Profile
+
+Purpose
+
+Displays popup dialogs.
+
+Do the same for:
+
+Sidebar
+
+Header
+
+Table
+
+Card
+
+Dropdown
+
+Tabs
+
+Toast
+
+Loader
+
+
+
+---
+
+6. coding_rules.md
+
+Example:
+
+Never manipulate DOM directly if helper exists.
+
+Use Utils.createElement().
+
+All API calls go through request.js.
+
+CSS variables only.
+
+Never hardcode colors.
+
+Use event delegation.
+
+Do not duplicate utilities.
+
+Shared styles go into common.css.
+
+This file prevents inconsistent implementations.
+
+
+---
+
+7. common_tasks.md
+
+This is like a playbook.
+
+Example:
+
+Adding a new page
+
+1.
+Create HTML
+
+2.
+Create JS
+
+3.
+Create CSS
+
+4.
+Register navigation
+
+5.
+Update routing
+
+6.
+Update tests
+
+Another:
+
+Adding a modal
+
+Reuse modal.js.
+
+Do not create a new modal implementation.
+
+
+---
+
+8. pitfalls.md
+
+This becomes incredibly useful over time.
+
+Example:
+
+Theme switching is handled globally.
+
+Do not modify body classes manually.
+
+Navigation is generated dynamically.
+
+Do not edit HTML directly.
+
+Settings page reuses Profile modal.
+
+Avoid duplicating it.
+
+Every time developers discover a recurring issue, add it here.
+
+
+---
+
+What I'd generate automatically
+
+Since you can call GitHub get_content, I'd have a scheduled process generate a lightweight manifest rather than asking the agent to inspect every file.
+
+Example:
+
+{
+  "dashboard.js": {
+    "purpose": "Dashboard interactions",
+    "depends_on": [
+      "chart.js",
+      "utils.js"
+    ],
+    "exports": [
+      "renderDashboard"
+    ]
+  },
+  "navbar.js": {
+    "purpose": "Navigation",
+    "depends_on": [
+      "utils.js"
+    ]
+  }
+}
+
+The agent reads this manifest first, then fetches only the handful of source files it actually needs.
+
+The biggest improvement I'd make
+
+Because you mentioned many large JavaScript files, I would avoid treating each file as a single unit. Instead, maintain an index of logical sections within large files. For example:
+
+dashboard.js
+
+Lines 1–120
+Initialization
+
+Lines 121–260
+Filters
+
+Lines 261–480
+Chart rendering
+
+Lines 481–620
+Export functionality
+
+Lines 621–900
+Event handlers
+
+Or even better, index by function names and responsibilities if they're well defined. That way, when the user asks "add a filter," your agent knows to fetch and focus on the "Filters" section instead of reasoning over a 900-line file. This dramatically improves accuracy while keeping get_content usage efficient.
