@@ -1,0 +1,83 @@
+A good enterprise pattern is similar to GitHub Copilot, Perplexity, or Microsoft 365 Copilot—keep the answer readable, but attach inline citation chips exactly where each claim comes from.
+
+For example, if the user asks:
+
+> How do I request production access?
+
+
+
+The response could look like this:
+
+
+---
+
+Response
+
+To request production access, submit an Access Request in ServiceNow and select the appropriate application and environment [1].
+
+The request must be approved by both your Application Owner and your Line Manager before provisioning begins [1][2].
+
+Before access is granted, you must complete all mandatory compliance training, including Information Security and Data Privacy training [2].
+
+Once all approvals are complete, the Infrastructure Support team provisions the access. The standard turnaround time is 1–2 business days [3].
+
+
+---
+
+Sources
+
+[1] Production Access Process
+📂 Space: DEVOPS
+📄 Section: Requesting Production Access
+
+[2] Access Governance Policy
+📂 Space: SECURITY
+📄 Section: Approval Requirements
+
+[3] Infrastructure Support SLA
+📂 Space: INFRA
+📄 Section: Service Timelines
+
+
+---
+
+If the user clicks [2], your UI can:
+
+Open the Confluence page.
+
+Scroll directly to the "Approval Requirements" section.
+
+Highlight the exact paragraph used to generate the answer.
+
+
+Another example
+
+User: Can I deploy directly to production?
+
+Response:
+
+No. Standard releases require CAB approval before production deployment [1].
+
+Emergency deployments are allowed only through the Emergency CAB process and must include a documented business justification [2].
+
+After deployment, teams are required to perform smoke testing and update the release ticket with the validation results [3].
+
+
+---
+
+Sources
+
+[1] Release Management Process
+[2] Emergency Release SOP
+[3] Production Deployment Checklist
+
+
+---
+
+This style has several advantages:
+
+Users immediately see which statements are backed by documentation.
+
+Multiple citations (e.g. [1][2]) show that a statement was synthesized from more than one source.
+
+The response remains clean and conversational, while the citations provide traceability without interrupting the reading experience.
